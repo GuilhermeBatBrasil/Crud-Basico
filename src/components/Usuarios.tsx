@@ -1,8 +1,9 @@
 import React from "react";
 import Table from 'react-bootstrap/Table';
-import { Button } from "react-bootstrap";
+import { Button, Pagination } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import { Modal } from "react-bootstrap";
+import DataTable from "datatables.net-dt";
 
 interface Usuario {
     ID: number;
@@ -16,6 +17,8 @@ interface UsuariosState {
     Email: string;
     usuarios: Usuario[];
     modalAberto: boolean;
+    currentPage: number;
+    usuariosPerPage: number;
 }
 
 class Usuarios extends React.Component<{}, UsuariosState> {
@@ -26,7 +29,9 @@ class Usuarios extends React.Component<{}, UsuariosState> {
             Nome: '',
             Email: '',
             usuarios: [],
-            modalAberto: false
+            modalAberto: false,
+            currentPage: 1,
+            usuariosPerPage: 10
         }
     }
 
@@ -98,29 +103,55 @@ class Usuarios extends React.Component<{}, UsuariosState> {
     }
 
     renderTabela() {
+        const { usuarios, currentPage, usuariosPerPage } = this.state;
+
+        // Lógica para determinar os usuários da página atual
+        const indexOfLastUsuario = currentPage * usuariosPerPage;
+        const indexOfFirstUsuario = indexOfLastUsuario - usuariosPerPage;
+        const currentUsuarios = usuarios.slice(indexOfFirstUsuario, indexOfLastUsuario);
+
+        const totalPages = Math.ceil(usuarios.length / usuariosPerPage);
+
         return (
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <td>Nome</td>
-                        <td>Email</td>
-                        <td>Opções</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.state.usuarios.map((usuario) =>
-                        <tr key={usuario.ID}>
-                            <td>{usuario.Nome}</td>
-                            <td>{usuario.Email}</td>
-                            <td>
-                                <Button variant="secondary" onClick={() => this.carregarUsuario(usuario.ID)}>Atualizar</Button>
-                                <Button variant="danger" onClick={() => this.deletarUsuario(usuario.ID)}>Delete</Button>
-                            </td>
+            <>
+                <Table className="table" striped bordered hover>
+                    <thead>
+                        <tr>
+                            <td>Nome</td>
+                            <td>Email</td>
+                            <td>Opções</td>
                         </tr>
-                    )}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {currentUsuarios.map((usuario) =>
+                            <tr key={usuario.ID}>
+                                <td>{usuario.Nome}</td>
+                                <td>{usuario.Email}</td>
+                                <td>
+                                    <Button variant="secondary" onClick={() => this.carregarUsuario(usuario.ID)}>Atualizar</Button>
+                                    <Button variant="danger" onClick={() => this.deletarUsuario(usuario.ID)}>Delete</Button>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </Table>
+                <Pagination>
+                    <Pagination.First onClick={() => this.paginar(1)} />
+                    <Pagination.Prev onClick={() => this.paginar(currentPage - 1)} disabled={currentPage === 1} />
+                    {[...Array(totalPages)].map((_, index) => (
+                        <Pagination.Item key={index} active={index + 1 === currentPage} onClick={() => this.paginar(index + 1)}>
+                            {index + 1}
+                        </Pagination.Item>
+                    ))}
+                    <Pagination.Next onClick={() => this.paginar(currentPage + 1)} disabled={currentPage === totalPages} />
+                    <Pagination.Last onClick={() => this.paginar(totalPages)} />
+                </Pagination>
+            </>
         )
+    }
+
+    paginar = (pageNumber: number) => {
+        this.setState({ currentPage: pageNumber });
     }
 
     atualizaNome = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -220,7 +251,6 @@ class Usuarios extends React.Component<{}, UsuariosState> {
                 <Button variant="success" onClick={this.reset}>
                     Novo
                 </Button>
-
                 {this.renderTabela()}
             </div>
         )
