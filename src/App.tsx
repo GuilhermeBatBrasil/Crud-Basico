@@ -13,7 +13,7 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Nav variant="tabs">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
-          <Nav.Link as={Link} to="/usuarios">Usuarios</Nav.Link>
+          <Nav.Link as={Link} to="/usuarios">Usuários</Nav.Link>
           <Nav.Link as={Link} to="/sobre">Sobre</Nav.Link>
         </Nav>
         
