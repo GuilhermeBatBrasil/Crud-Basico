@@ -1,24 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Home from './components/Home';
+import Sobre from './components/Sobre';
+import Usuarios from './components/Usuarios';
+import { BrowserRouter, Routes, Link, Route } from 'react-router-dom';
+import { Nav } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>CRUD</h1>
+      <BrowserRouter>
+        <Nav variant="tabs">
+          <Nav.Link as={Link} to="/">Home</Nav.Link>
+          <Nav.Link as={Link} to="/usuarios">Usuarios</Nav.Link>
+          <Nav.Link as={Link} to="/sobre">Sobre</Nav.Link>
+        </Nav>
+        
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/sobre" element={<Sobre />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
