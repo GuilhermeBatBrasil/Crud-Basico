@@ -3,7 +3,6 @@ import Table from 'react-bootstrap/Table';
 import { Button, Pagination } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import { Modal } from "react-bootstrap";
-import DataTable from "datatables.net-dt";
 
 interface Usuario {
     ID: number;
